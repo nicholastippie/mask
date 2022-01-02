@@ -1,0 +1,94 @@
+[
+    {
+        "rule": "fake_string_substitution",
+        "database": "",
+        "schema": "",
+        "table": "",
+        "column": "",
+        "where_clause": "",
+        "data_set_path": "",
+        "data_set_key": ""
+    },
+    {
+        "rule": "static_string_substitution",
+        "database": "",
+        "schema": "",
+        "table": "", 
+        "column": "",
+        "static_value": "",
+        "where_clause": ""
+    },
+    {
+        "rule": "fake_ssn_substitution",
+        "database": "",
+        "schema": "",
+        "table": "", 
+        "column": "",
+        "seperator": "",
+        "ignore_null": ""
+
+    },
+    {
+        "rule": "date_substitution",
+        "database": "",
+        "schema": "",
+        "table": "",
+        "column": "",
+        "adjust_by_range": 1
+    },
+    {
+        "rule": "truncate_table",
+        "database": "",
+        "schema": "",
+        "table": ""
+    },
+    {
+        "rule": "delete_rows",
+        "database": "",
+        "schema": "",
+        "table": "",
+        "where_clause": ""
+    },
+    {
+        "rule": "disable_trigger",
+        "database": "",
+        "schema": "",
+        "table": "",
+        "trigger": ""
+    },
+    {
+        "rule": "enable_trigger",
+        "database": "",
+        "schema": "",
+        "table": "",
+        "trigger": ""
+    },    
+    {
+        "rule": "disable_check_constraint",
+        "database": "",
+        "schema": "",
+        "table": "",
+        "check_constraint": ""
+    },
+    {
+        "rule": "enable_check_constraint",
+        "database": "",
+        "schema": "",
+        "table": "",
+        "check_constraint": ""
+    },    
+    {
+        "rule": "disable_foreign_key",
+        "database": "",
+        "schema": "",
+        "table": "",
+        "foreign_key": ""
+    },
+    {
+        "rule": "enable_foreign_key",
+        "database": "",
+        "schema": "",
+        "table": "",
+        "foreign_key": ""
+    }
+]
