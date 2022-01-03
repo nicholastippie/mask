@@ -8,14 +8,8 @@ import sys
 
 
 def main(instruction_set: dict, database_gateway: DatabaseGateway) -> None:
-    rule_controller: list[Rule] = []
-
     for instructions in instruction_set:
         rule: Rule = RulesFactory.create_rule(instructions, database_gateway)
-        rule.validate_instructions()
-        rule_controller.append(rule)
-
-    for rule in rule_controller:
         rule.execute()
         print(f"Executed {rule}")
 

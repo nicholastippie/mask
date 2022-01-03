@@ -1,29 +1,16 @@
-from mask.rules.rule import Rule
-from mask.database_access.database_gateway import DatabaseGateway
+from mask.rules.rule import DatabaseObjectRule
 from dataclasses import dataclass
 
 
 @dataclass
-class DisableTriggerRule(Rule):
+class DisableTriggerRule(DatabaseObjectRule):
     """ Disables one or more table triggers in a database """
 
-    database: str = ""
-    schema: str = ""
-    table: str = ""
     trigger: str = ""
-    database_gateway: DatabaseGateway = None
 
     def __str__(self) -> str:
         return f"{__class__.__name__} with database='{self.database}', " \
                f"schema='{self.schema}', table='{self.table}', trigger='{self.trigger}'"
-
-    def validate_instructions(self) -> None:
-        if self.database == "*":
-            raise ValueError(f"Wildcard character is not allowed for 'database' property "
-                             f"for {self}")
-        if self.table == "*":
-            raise ValueError(f"Wildcard character is not allowed for 'table' property "
-                             f"for {self}")
 
     def execute(self) -> None:
         """
@@ -81,26 +68,14 @@ class DisableTriggerRule(Rule):
 
 
 @dataclass
-class EnableTriggerRule(Rule):
+class EnableTriggerRule(DatabaseObjectRule):
     """ Enables one or more table triggers in a database """
 
-    database: str = ""
-    schema: str = ""
-    table: str = ""
     trigger: str = ""
-    database_gateway: DatabaseGateway = None
 
     def __str__(self) -> str:
         return f"{__class__.__name__} with database='{self.database}', " \
                f"schema='{self.schema}', table='{self.table}', trigger='{self.trigger}'"
-
-    def validate_instructions(self) -> None:
-        if self.database == "*":
-            raise ValueError(f"Wildcard character is not allowed for 'database' property "
-                             f"for {self}")
-        if self.table == "*":
-            raise ValueError(f"Wildcard character is not allowed for 'table' property "
-                             f"for {self}")
 
     def execute(self) -> None:
         """
@@ -158,26 +133,14 @@ class EnableTriggerRule(Rule):
 
 
 @dataclass
-class DisableCheckConstraintRule(Rule):
+class DisableCheckConstraintRule(DatabaseObjectRule):
     """ Disable one or more table check constraints in a database """
 
-    database: str = ""
-    schema: str = ""
-    table: str = ""
     check_constraint: str = ""
-    database_gateway: DatabaseGateway = None
 
     def __str__(self) -> str:
         return f"{__class__.__name__} with database='{self.database}', " \
                f"schema='{self.schema}', table='{self.table}', check_constraint='{self.check_constraint}'"
-
-    def validate_instructions(self) -> None:
-        if self.database == "*":
-            raise ValueError(f"Wildcard character is not allowed for 'database' property "
-                             f"for {self}")
-        if self.table == "*":
-            raise ValueError(f"Wildcard character is not allowed for 'table' property "
-                             f"for {self}")
 
     def execute(self) -> None:
         if self.schema == "*":
@@ -201,26 +164,14 @@ class DisableCheckConstraintRule(Rule):
 
 
 @dataclass
-class EnableCheckConstraintRule(Rule):
+class EnableCheckConstraintRule(DatabaseObjectRule):
     """ Enable one or more table check constraints in a database """
 
-    database: str = ""
-    schema: str = ""
-    table: str = ""
     check_constraint: str = ""
-    database_gateway: DatabaseGateway = None
 
     def __str__(self) -> str:
         return f"{__class__.__name__} with database='{self.database}', " \
                f"schema='{self.schema}', table='{self.table}', check_constraint='{self.check_constraint}'"
-
-    def validate_instructions(self) -> None:
-        if self.database == "*":
-            raise ValueError(f"Wildcard character is not allowed for 'database' property "
-                             f"for {self}")
-        if self.table == "*":
-            raise ValueError(f"Wildcard character is not allowed for 'table' property "
-                             f"for {self}")
 
     def execute(self) -> None:
         if self.schema == "*":
@@ -244,26 +195,14 @@ class EnableCheckConstraintRule(Rule):
 
 
 @dataclass
-class DisableForeignKeyRule(Rule):
+class DisableForeignKeyRule(DatabaseObjectRule):
     """ Disable one or more foreign keys in a database """
 
-    database: str = ""
-    schema: str = ""
-    table: str = ""
     foreign_key: str = ""
-    database_gateway: DatabaseGateway = None
 
     def __str__(self) -> str:
         return f"{__class__.__name__} with database='{self.database}', " \
                f"schema='{self.schema}', table='{self.table}', foreign_key='{self.foreign_key}'"
-
-    def validate_instructions(self) -> None:
-        if self.database == "*":
-            raise ValueError(f"Wildcard character is not allowed for 'database' property "
-                             f"for {self}")
-        if self.table == "*":
-            raise ValueError(f"Wildcard character is not allowed for 'table' property "
-                             f"for {self}")
 
     def execute(self) -> None:
         if self.schema == "*":
@@ -287,26 +226,14 @@ class DisableForeignKeyRule(Rule):
 
 
 @dataclass
-class EnableForeignKeyRule(Rule):
+class EnableForeignKeyRule(DatabaseObjectRule):
     """ Enable one or more foreign keys in a database """
 
-    database: str = ""
-    schema: str = ""
-    table: str = ""
     foreign_key: str = ""
-    database_gateway: DatabaseGateway = None
 
     def __str__(self) -> str:
         return f"{__class__.__name__} with database='{self.database}', " \
                f"schema='{self.schema}', table='{self.table}', foreign_key='{self.foreign_key}'"
-
-    def validate_instructions(self) -> None:
-        if self.database == "*":
-            raise ValueError(f"Wildcard character is not allowed for 'database' property "
-                             f"for {self}")
-        if self.table == "*":
-            raise ValueError(f"Wildcard character is not allowed for 'table' property "
-                             f"for {self}")
 
     def execute(self) -> None:
         if self.schema == "*":

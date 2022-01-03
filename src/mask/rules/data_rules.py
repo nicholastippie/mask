@@ -1,7 +1,6 @@
 from mask.config.constants import Constants
-from mask.database_access.database_gateway import DatabaseGateway
 from mask.file import generate_dict_from_json
-from mask.rules.rule import Rule
+from mask.rules.rule import DataRule
 
 from dataclasses import dataclass
 from datetime import datetime, timedelta
@@ -11,17 +10,13 @@ from random import randint, choice
 
 
 @dataclass
-class FakeStringSubstitutionRule(Rule):
+class FakeStringSubstitutionRule(DataRule):
     """ Replaces values in a column with data from a data set """
 
-    database: str = ""
-    schema: str = ""
-    table: str = ""
     column: str = ""
     where_clause: str = ""
     data_set_path: str = ""
     data_set_key: str = ""
-    database_gateway: DatabaseGateway = None
 
     def __str__(self) -> str:
         return f"{__class__.__name__} on " \
@@ -30,12 +25,7 @@ class FakeStringSubstitutionRule(Rule):
                f"and where clause '{self.where_clause}'"
 
     def validate_instructions(self) -> None:
-        if self.database == "":
-            raise ValueError(f"'database' property not set for {self}")
-        if self.schema == "":
-            raise ValueError(f"'schema' property not set for {self}")
-        if self.table == "":
-            raise ValueError(f"'table' property not set for {self}")
+        super().validate_instructions()
         if self.column == "":
             raise ValueError(f"'column' property not set for {self}")
         if not exists(self.data_set_path):
@@ -89,28 +79,19 @@ class FakeStringSubstitutionRule(Rule):
 
 
 @dataclass
-class StaticStringSubstitutionRule(Rule):
+class StaticStringSubstitutionRule(DataRule):
     """ Replaces the values in a column with a static string value """
 
-    database: str = ""
-    schema: str = ""
-    table: str = ""
     column: str = ""
     static_value: str = ""
     where_clause: str = ""
-    database_gateway: DatabaseGateway = None
 
     def __str__(self) -> str:
         return f"{__class__.__name__} on [{self.database}].[{self.schema}].[{self.table}] " \
                f"with the static value '{self.static_value}'"
 
     def validate_instructions(self) -> None:
-        if self.database == "":
-            raise ValueError(f"'database' property not set for {self}")
-        if self.schema == "":
-            raise ValueError(f"'schema' property not set for {self}")
-        if self.table == "":
-            raise ValueError(f"'table' property not set for {self}")
+        super().validate_instructions()
         if self.column == "":
             raise ValueError(f"'column' property not set for {self}")
 
@@ -130,32 +111,23 @@ class StaticStringSubstitutionRule(Rule):
 
 
 @dataclass
-class FakeSsnSubstitutionRule(Rule):
+class FakeSsnSubstitutionRule(DataRule):
     """ Generates a random invalid Social Security Number """
 
     class IgnoreNullOptions(Enum):
         AFFIRMATIVE = "yes"
         NEGATIVE = "no"
 
-    database: str = ""
-    schema: str = ""
-    table: str = ""
     column: str = ""
     seperator: str = ""
     ignore_null: str = ""
-    database_gateway:  DatabaseGateway = None
 
     def __str__(self) -> str:
         return f"{__class__.__name__} on [{self.database}].[{self.schema}].[{self.table}]" \
                f".[{self.column}] with '{self.seperator}' seperator"
 
     def validate_instructions(self) -> None:
-        if self.database == "":
-            raise ValueError(f"'database' property not set for {self}")
-        if self.schema == "":
-            raise ValueError(f"'schema' property not set for {self}")
-        if self.table == "":
-            raise ValueError(f"'table' property not set for {self}")
+        super().validate_instructions()
         if self.column == "":
             raise ValueError(f"'column' property not set for {self}")
         if self.ignore_null != self.IgnoreNullOptions.AFFIRMATIVE.value \
@@ -262,21 +234,17 @@ class FakeSsnSubstitutionRule(Rule):
 
 
 @dataclass
-class DateVarianceRule(Rule):
+class DateVarianceRule(DataRule):
     """ Move a date by a random amount within the specified bounds """
 
     class Method(Enum):
         SIMPLE = "simple"
         COMPLETE = "complete"
 
-    database: str = ""
-    schema: str = ""
-    table: str = ""
     column: str = ""
     range: int = 0
     where_clause: str = ""
     method: str = ""
-    database_gateway: DatabaseGateway = None
 
     def __str__(self) -> str:
         return f"{__class__.__name__} using the {str.upper(self.method)} method " \
@@ -285,12 +253,7 @@ class DateVarianceRule(Rule):
                f"and a where clause = '{self.where_clause}'"
 
     def validate_instructions(self) -> None:
-        if self.database == "":
-            raise ValueError(f"'database' property not set for {self}")
-        if self.schema == "":
-            raise ValueError(f"'schema' property not set for {self}")
-        if self.table == "":
-            raise ValueError(f"'table' property not set for {self}")
+        super().validate_instructions()
         if self.column == "":
             raise ValueError(f"'column' property not set for {self}")
         if self.range == 0:
@@ -319,7 +282,7 @@ class DateVarianceRule(Rule):
         """
         range_min = 1 if self.range > 0 else -1
 
-        where_clause = "where 1=1" if self.where_clause == "" else self.where_clause
+        where_clause = Constants.DEFAULT_WHERE_CLAUSE if self.where_clause == "" else self.where_clause
         where_clause = self.database_gateway.append_where_column_is_not_null(
             column=self.column,
             where_clause=where_clause
@@ -344,7 +307,7 @@ class DateVarianceRule(Rule):
 
         :return: None
         """
-        select_where_clause: str = self.where_clause if self.where_clause != "" else "where 1=1"
+        select_where_clause: str = self.where_clause if self.where_clause != "" else Constants.DEFAULT_WHERE_CLAUSE
         select_where_clause = self.database_gateway.append_where_column_is_not_null(
             column=self.column,
             where_clause=select_where_clause
@@ -392,50 +355,25 @@ class DateVarianceRule(Rule):
 
 
 @dataclass
-class TruncateTableRule(Rule):
+class TruncateTableRule(DataRule):
     """ Truncates the specified table in a database """
-
-    database: str = ""
-    schema: str = ""
-    table: str = ""
-    database_gateway: DatabaseGateway = None
 
     def __str__(self) -> str:
         return f"{__class__.__name__} on [{self.database}].[{self.schema}].[{self.table}]"
-
-    def validate_instructions(self) -> None:
-        if self.database == "":
-            raise ValueError(f"'database' property not set for {self}")
-        if self.schema == "":
-            raise ValueError(f"'schema' property not set for {self}")
-        if self.table == "":
-            raise ValueError(f"'table' property not set for {self}")
 
     def execute(self):
         self.database_gateway.truncate_table(self.database, self.schema, self.table)
 
 
 @dataclass
-class DeleteRowsRule(Rule):
+class DeleteRowsRule(DataRule):
     """ Deletes all rows in a table or only those specified in a where clause """
 
-    database: str = ""
-    schema: str = ""
-    table: str = ""
     where_clause: str = ""
-    database_gateway: DatabaseGateway = None
 
     def __str__(self) -> str:
         return f"{__class__.__name__} on [{self.database}].[{self.schema}].[{self.table}] with " \
                f"with where clause = '{self.where_clause}'"
-
-    def validate_instructions(self) -> None:
-        if self.database == "":
-            raise ValueError(f"'database' property not set for {self}")
-        if self.schema == "":
-            raise ValueError(f"'schema' property not set for {self}")
-        if self.table == "":
-            raise ValueError(f"'table' property not set for {self}")
 
     def execute(self):
         self.database_gateway.delete_rows(

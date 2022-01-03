@@ -32,7 +32,7 @@ class RulesFactory:
 
         try:
             if instructions["rule"] == "fake_string_substitution":
-                return FakeStringSubstitutionRule(
+                rule = FakeStringSubstitutionRule(
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
@@ -43,7 +43,7 @@ class RulesFactory:
                     database_gateway=database_gateway
                 )
             elif instructions["rule"] == "static_string_substitution":
-                return StaticStringSubstitutionRule(
+                rule = StaticStringSubstitutionRule(
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
@@ -53,7 +53,7 @@ class RulesFactory:
                     database_gateway=database_gateway
                 )
             elif instructions["rule"] == "fake_ssn_substitution":
-                return FakeSsnSubstitutionRule(
+                rule = FakeSsnSubstitutionRule(
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
@@ -63,7 +63,7 @@ class RulesFactory:
                     database_gateway=database_gateway
                 )
             elif instructions["rule"] == "date_variance":
-                return DateVarianceRule(
+                rule = DateVarianceRule(
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
@@ -74,14 +74,14 @@ class RulesFactory:
                     database_gateway=database_gateway
                 )
             elif instructions["rule"] == "truncate_table":
-                return TruncateTableRule(
+                rule = TruncateTableRule(
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
                     database_gateway=database_gateway
                 )
             elif instructions["rule"] == "delete_rows":
-                return DeleteRowsRule(
+                rule = DeleteRowsRule(
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
@@ -89,7 +89,7 @@ class RulesFactory:
                     database_gateway=database_gateway
                 )
             elif instructions["rule"] == "disable_trigger":
-                return DisableTriggerRule(
+                rule = DisableTriggerRule(
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
@@ -97,7 +97,7 @@ class RulesFactory:
                     database_gateway=database_gateway
                 )
             elif instructions["rule"] == "enable_trigger":
-                return EnableTriggerRule(
+                rule = EnableTriggerRule(
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
@@ -105,7 +105,7 @@ class RulesFactory:
                     database_gateway=database_gateway
                 )
             elif instructions["rule"] == "disable_check_constraint":
-                return DisableCheckConstraintRule(
+                rule = DisableCheckConstraintRule(
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
@@ -113,7 +113,7 @@ class RulesFactory:
                     database_gateway=database_gateway
                 )
             elif instructions["rule"] == "enable_check_constraint":
-                return EnableCheckConstraintRule(
+                rule = EnableCheckConstraintRule(
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
@@ -121,7 +121,7 @@ class RulesFactory:
                     database_gateway=database_gateway
                 )
             elif instructions["rule"] == "disable_foreign_key":
-                return DisableForeignKeyRule(
+                rule = DisableForeignKeyRule(
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
@@ -129,7 +129,7 @@ class RulesFactory:
                     database_gateway=database_gateway
                 )
             elif instructions["rule"] == "enable_foreign_key":
-                return EnableForeignKeyRule(
+                rule = EnableForeignKeyRule(
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
@@ -141,3 +141,6 @@ class RulesFactory:
         except KeyError as ke:
             print(f"{ke} is missing from the instructions for the {instructions['rule']} rule.")
             raise
+
+        rule.validate_instructions()
+        return rule
