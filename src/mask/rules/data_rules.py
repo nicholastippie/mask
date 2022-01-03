@@ -1,12 +1,32 @@
 from mask.config.constants import Constants
+from mask.database_access.database_gateway import DatabaseGateway
 from mask.file import generate_dict_from_json
-from mask.rules.rule import DataRule
+from mask.rules.rule import Rule
 
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
 from os.path import exists
 from random import randint, choice
+
+
+@dataclass
+class DataRule(Rule):
+    database: str = ""
+    schema: str = ""
+    table: str = ""
+    database_gateway: DatabaseGateway = None
+
+    def validate_instructions(self) -> None:
+        if self.database == "":
+            raise ValueError(f"'database' property not set for {self}")
+        if self.schema == "":
+            raise ValueError(f"'schema' property not set for {self}")
+        if self.table == "":
+            raise ValueError(f"'table' property not set for {self}")
+
+    def execute(self) -> None:
+        pass
 
 
 @dataclass

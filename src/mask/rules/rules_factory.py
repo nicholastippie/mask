@@ -1,5 +1,4 @@
 from mask.database_access.database_gateway import DatabaseGateway
-from mask.rules.rule import Rule
 from mask.rules.data_rules import (
     FakeStringSubstitutionRule,
     FakeSsnSubstitutionRule,
@@ -16,6 +15,7 @@ from mask.rules.database_object_rules import (
     DisableForeignKeyRule,
     EnableForeignKeyRule
 )
+from mask.rules.rule import Rule
 
 
 class RulesFactory:
