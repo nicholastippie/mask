@@ -1,6 +1,7 @@
 [
     {
         "rule": "fake_string_substitution",
+        "group": 1,
         "database": "",
         "schema": "",
         "table": "",
@@ -11,6 +12,7 @@
     },
     {
         "rule": "static_string_substitution",
+        "group": 1,
         "database": "",
         "schema": "",
         "table": "", 
@@ -20,30 +22,35 @@
     },
     {
         "rule": "fake_ssn_substitution",
+        "group": 1,
         "database": "",
         "schema": "",
         "table": "", 
         "column": "",
         "seperator": "",
         "ignore_null": ""
-
     },
     {
-        "rule": "date_substitution",
+        "rule": "date_variance",
+        "group": 1,
         "database": "",
         "schema": "",
         "table": "",
         "column": "",
-        "adjust_by_range": 1
+        "range": 1,
+        "where_clause": "",
+        "method": ""
     },
     {
         "rule": "truncate_table",
+        "group": 1,
         "database": "",
         "schema": "",
         "table": ""
     },
     {
         "rule": "delete_rows",
+        "group": 1,
         "database": "",
         "schema": "",
         "table": "",
@@ -51,6 +58,7 @@
     },
     {
         "rule": "disable_trigger",
+        "group": 1,
         "database": "",
         "schema": "",
         "table": "",
@@ -58,6 +66,7 @@
     },
     {
         "rule": "enable_trigger",
+        "group": 1,
         "database": "",
         "schema": "",
         "table": "",
@@ -65,6 +74,7 @@
     },    
     {
         "rule": "disable_check_constraint",
+        "group": 1,
         "database": "",
         "schema": "",
         "table": "",
@@ -72,6 +82,7 @@
     },
     {
         "rule": "enable_check_constraint",
+        "group": 1,
         "database": "",
         "schema": "",
         "table": "",
@@ -79,6 +90,7 @@
     },    
     {
         "rule": "disable_foreign_key",
+        "group": 1,
         "database": "",
         "schema": "",
         "table": "",
@@ -86,6 +98,7 @@
     },
     {
         "rule": "enable_foreign_key",
+        "group": 1,
         "database": "",
         "schema": "",
         "table": "",

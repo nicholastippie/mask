@@ -513,7 +513,11 @@ class SqlServerDatabaseGateway(DatabaseGateway):
         )
 
     def enable_single_check_constraint_for_table(
-            self, database: str, schema: str, table: str, check_constraint: str
+            self,
+            database: str,
+            schema: str,
+            table: str,
+            check_constraint: str
     ) -> None:
         self._database_context.execute(
             query=f"use [{database}]; "

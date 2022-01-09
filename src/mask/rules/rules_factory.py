@@ -33,6 +33,7 @@ class RulesFactory:
         try:
             if instructions["rule"] == "fake_string_substitution":
                 rule = FakeStringSubstitutionRule(
+                    group=instructions["group"],
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
@@ -44,6 +45,7 @@ class RulesFactory:
                 )
             elif instructions["rule"] == "static_string_substitution":
                 rule = StaticStringSubstitutionRule(
+                    group=instructions["group"],
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
@@ -54,6 +56,7 @@ class RulesFactory:
                 )
             elif instructions["rule"] == "fake_ssn_substitution":
                 rule = FakeSsnSubstitutionRule(
+                    group=instructions["group"],
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
@@ -64,6 +67,7 @@ class RulesFactory:
                 )
             elif instructions["rule"] == "date_variance":
                 rule = DateVarianceRule(
+                    group=instructions["group"],
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
@@ -75,6 +79,7 @@ class RulesFactory:
                 )
             elif instructions["rule"] == "truncate_table":
                 rule = TruncateTableRule(
+                    group=instructions["group"],
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
@@ -82,6 +87,7 @@ class RulesFactory:
                 )
             elif instructions["rule"] == "delete_rows":
                 rule = DeleteRowsRule(
+                    group=instructions["group"],
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
@@ -90,6 +96,7 @@ class RulesFactory:
                 )
             elif instructions["rule"] == "disable_trigger":
                 rule = DisableTriggerRule(
+                    group=instructions["group"],
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
@@ -98,6 +105,7 @@ class RulesFactory:
                 )
             elif instructions["rule"] == "enable_trigger":
                 rule = EnableTriggerRule(
+                    group=instructions["group"],
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
@@ -106,6 +114,7 @@ class RulesFactory:
                 )
             elif instructions["rule"] == "disable_check_constraint":
                 rule = DisableCheckConstraintRule(
+                    group=instructions["group"],
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
@@ -114,6 +123,7 @@ class RulesFactory:
                 )
             elif instructions["rule"] == "enable_check_constraint":
                 rule = EnableCheckConstraintRule(
+                    group=instructions["group"],
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
@@ -122,6 +132,7 @@ class RulesFactory:
                 )
             elif instructions["rule"] == "disable_foreign_key":
                 rule = DisableForeignKeyRule(
+                    group=instructions["group"],
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
@@ -130,6 +141,7 @@ class RulesFactory:
                 )
             elif instructions["rule"] == "enable_foreign_key":
                 rule = EnableForeignKeyRule(
+                    group=instructions["group"],
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],

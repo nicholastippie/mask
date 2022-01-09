@@ -12,6 +12,7 @@ class DatabaseObjectRule(Rule):
     database_gateway: DatabaseGateway = None
 
     def validate_instructions(self) -> None:
+        super().validate_instructions()
         if self.database == "":
             raise ValueError(f"'database' property not set for {self}")
         if self.schema == "":
@@ -34,8 +35,9 @@ class DisableTriggerRule(DatabaseObjectRule):
     trigger: str = ""
 
     def __str__(self) -> str:
-        return f"{__class__.__name__} with database='{self.database}', " \
-               f"schema='{self.schema}', table='{self.table}', trigger='{self.trigger}'"
+        return f"{__class__.__name__} " \
+               f"with database='{self.database}', schema='{self.schema}', " \
+               f"table='{self.table}', trigger='{self.trigger}'"
 
     def execute(self) -> None:
         """
@@ -99,8 +101,9 @@ class EnableTriggerRule(DatabaseObjectRule):
     trigger: str = ""
 
     def __str__(self) -> str:
-        return f"{__class__.__name__} with database='{self.database}', " \
-               f"schema='{self.schema}', table='{self.table}', trigger='{self.trigger}'"
+        return f"{__class__.__name__} " \
+               f"with database='{self.database}', schema='{self.schema}', " \
+               f"table='{self.table}', trigger='{self.trigger}'"
 
     def execute(self) -> None:
         """
@@ -164,8 +167,9 @@ class DisableCheckConstraintRule(DatabaseObjectRule):
     check_constraint: str = ""
 
     def __str__(self) -> str:
-        return f"{__class__.__name__} with database='{self.database}', " \
-               f"schema='{self.schema}', table='{self.table}', check_constraint='{self.check_constraint}'"
+        return f"{__class__.__name__} " \
+               f"with database='{self.database}', schema='{self.schema}', " \
+               f"table='{self.table}', check_constraint='{self.check_constraint}'"
 
     def execute(self) -> None:
         if self.schema == "*":
@@ -195,8 +199,9 @@ class EnableCheckConstraintRule(DatabaseObjectRule):
     check_constraint: str = ""
 
     def __str__(self) -> str:
-        return f"{__class__.__name__} with database='{self.database}', " \
-               f"schema='{self.schema}', table='{self.table}', check_constraint='{self.check_constraint}'"
+        return f"{__class__.__name__} " \
+               f"with database='{self.database}', schema='{self.schema}', " \
+               f"table='{self.table}', check_constraint='{self.check_constraint}'"
 
     def execute(self) -> None:
         if self.schema == "*":
@@ -226,8 +231,9 @@ class DisableForeignKeyRule(DatabaseObjectRule):
     foreign_key: str = ""
 
     def __str__(self) -> str:
-        return f"{__class__.__name__} with database='{self.database}', " \
-               f"schema='{self.schema}', table='{self.table}', foreign_key='{self.foreign_key}'"
+        return f"{__class__.__name__} " \
+               f"with database='{self.database}', schema='{self.schema}', " \
+               f"table='{self.table}', foreign_key='{self.foreign_key}'"
 
     def execute(self) -> None:
         if self.schema == "*":
@@ -257,8 +263,9 @@ class EnableForeignKeyRule(DatabaseObjectRule):
     foreign_key: str = ""
 
     def __str__(self) -> str:
-        return f"{__class__.__name__} with database='{self.database}', " \
-               f"schema='{self.schema}', table='{self.table}', foreign_key='{self.foreign_key}'"
+        return f"{__class__.__name__} " \
+               f"with database='{self.database}', schema='{self.schema}', " \
+               f"table='{self.table}', foreign_key='{self.foreign_key}'"
 
     def execute(self) -> None:
         if self.schema == "*":

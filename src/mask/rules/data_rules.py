@@ -18,6 +18,7 @@ class DataRule(Rule):
     database_gateway: DatabaseGateway = None
 
     def validate_instructions(self) -> None:
+        super().validate_instructions()
         if self.database == "":
             raise ValueError(f"'database' property not set for {self}")
         if self.schema == "":
@@ -107,7 +108,8 @@ class StaticStringSubstitutionRule(DataRule):
     where_clause: str = ""
 
     def __str__(self) -> str:
-        return f"{__class__.__name__} on [{self.database}].[{self.schema}].[{self.table}] " \
+        return f"{__class__.__name__} " \
+               f"on [{self.database}].[{self.schema}].[{self.table}] " \
                f"with the static value '{self.static_value}'"
 
     def validate_instructions(self) -> None:
@@ -143,7 +145,8 @@ class FakeSsnSubstitutionRule(DataRule):
     ignore_null: str = ""
 
     def __str__(self) -> str:
-        return f"{__class__.__name__} on [{self.database}].[{self.schema}].[{self.table}]" \
+        return f"{__class__.__name__} " \
+               f"on [{self.database}].[{self.schema}].[{self.table}]" \
                f".[{self.column}] with '{self.seperator}' seperator"
 
     def validate_instructions(self) -> None:
@@ -183,9 +186,15 @@ class FakeSsnSubstitutionRule(DataRule):
         for record in records:
             invalid_ssn: str = ""
             is_unique: bool = False
+            retry_attempts: int = 0
             while not is_unique:
+                if retry_attempts >= Constants.MAX_RETRY_ATTEMPTS:
+                    raise ValueError(f"Could not find a unique invalid SSN within the allowed retry attempts")
+
                 invalid_ssn = self._generate_invalid_ssn()
+
                 if invalid_ssn in list_of_used_invalid_ssns:
+                    retry_attempts = retry_attempts + 1
                     is_unique = False
                 else:
                     list_of_used_invalid_ssns.append(invalid_ssn)
@@ -210,7 +219,7 @@ class FakeSsnSubstitutionRule(DataRule):
 
             count = count + 1
             if count % 1000 == 0:
-                print(f"Count={count} @ {datetime.now()}")
+                print(f"Count={count} @ {datetime.now()} for {self}")
 
     def _generate_invalid_ssn(self) -> str:
         """
@@ -267,7 +276,8 @@ class DateVarianceRule(DataRule):
     method: str = ""
 
     def __str__(self) -> str:
-        return f"{__class__.__name__} using the {str.upper(self.method)} method " \
+        return f"{__class__.__name__} {__class__.__name__} " \
+               f"using the {str.upper(self.method)} method " \
                f"on [{self.database}].[{self.schema}].[{self.table}]." \
                f"[{self.column}] with random range '{self.range}' " \
                f"and a where clause = '{self.where_clause}'"
@@ -302,18 +312,17 @@ class DateVarianceRule(DataRule):
         """
         range_min = 1 if self.range > 0 else -1
 
-        where_clause = Constants.DEFAULT_WHERE_CLAUSE if self.where_clause == "" else self.where_clause
-        where_clause = self.database_gateway.append_where_column_is_not_null(
-            column=self.column,
-            where_clause=where_clause
-        )
+        where_clause: str = self.where_clause if self.where_clause != "" else Constants.DEFAULT_WHERE_CLAUSE
 
         self.database_gateway.update_date_column_with_random_variance(
             database=self.database,
             schema=self.schema,
             table=self.table,
             column=self.column,
-            where_clause=where_clause,
+            where_clause=self.database_gateway.append_where_column_is_not_null(
+                column=self.column,
+                where_clause=where_clause
+            ),
             range_min=range_min,
             range_max=self.range
         )
@@ -371,7 +380,7 @@ class DateVarianceRule(DataRule):
 
             count = count + 1
             if count % 1000 == 0:
-                print(f"Count={count} @ {datetime.now()}")
+                print(f"Count={count} @ {datetime.now()} for {self}")
 
 
 @dataclass
@@ -379,7 +388,8 @@ class TruncateTableRule(DataRule):
     """ Truncates the specified table in a database """
 
     def __str__(self) -> str:
-        return f"{__class__.__name__} on [{self.database}].[{self.schema}].[{self.table}]"
+        return f"{__class__.__name__} {__class__.__name__} " \
+               f"on [{self.database}].[{self.schema}].[{self.table}]"
 
     def execute(self):
         self.database_gateway.truncate_table(self.database, self.schema, self.table)
@@ -392,7 +402,8 @@ class DeleteRowsRule(DataRule):
     where_clause: str = ""
 
     def __str__(self) -> str:
-        return f"{__class__.__name__} on [{self.database}].[{self.schema}].[{self.table}] with " \
+        return f"{__class__.__name__} " \
+               f"on [{self.database}].[{self.schema}].[{self.table}] with " \
                f"with where clause = '{self.where_clause}'"
 
     def execute(self):
