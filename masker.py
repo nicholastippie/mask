@@ -1,4 +1,8 @@
-from mask.config.operations import load_configuration
+from mask.config.operations import (
+    get_configuration_settings_from_file,
+    get_instruction_set_from_file,
+    create_database_gateway_from_configuration_settings
+)
 from mask.database_access.database_gateway import DatabaseGateway
 from mask.rules.rule import Rule
 from mask.rules.rules_factory import RulesFactory
@@ -8,7 +12,17 @@ import sys
 import threading
 
 
-def main(instruction_set: dict, database_gateway: DatabaseGateway) -> None:
+def main(arguments) -> None:
+    configuration_settings: dict = get_configuration_settings_from_file(
+        configuration_file=arguments.config
+    )
+    instruction_set: dict = get_instruction_set_from_file(
+        instruction_set_file=configuration_settings["instruction_set_file"]
+    )
+    database_gateway: DatabaseGateway = create_database_gateway_from_configuration_settings(
+        configuration_settings=configuration_settings
+    )
+
     rule_controller: list[Rule] = []
 
     # This has a list of distinct group numbers from the instruction set. It
@@ -50,14 +64,10 @@ def main(instruction_set: dict, database_gateway: DatabaseGateway) -> None:
 
 
 if __name__ == "__main__":
-    """ If executing as program, bootstrap then call main() """
-
     parser = argparse.ArgumentParser(
         description='A data masking utility for relational database management systems'
     )
     parser.add_argument("--config", required=True, help="path to the configuration file")
     args = parser.parse_args()
 
-    ins, db = load_configuration(args.config)
-
-    main(instruction_set=ins, database_gateway=db)
+    main(args)

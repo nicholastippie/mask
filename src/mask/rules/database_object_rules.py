@@ -1,4 +1,3 @@
-from mask.database_access.database_gateway import DatabaseGateway
 from mask.rules.rule import Rule
 
 from dataclasses import dataclass
@@ -9,7 +8,6 @@ class DatabaseObjectRule(Rule):
     database: str = ""
     schema: str = ""
     table: str = ""
-    database_gateway: DatabaseGateway = None
 
     def validate_instructions(self) -> None:
         super().validate_instructions()

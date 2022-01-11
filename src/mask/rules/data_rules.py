@@ -1,5 +1,4 @@
 from mask.config.constants import Constants
-from mask.database_access.database_gateway import DatabaseGateway
 from mask.file import generate_dict_from_json
 from mask.rules.rule import Rule
 
@@ -15,7 +14,6 @@ class DataRule(Rule):
     database: str = ""
     schema: str = ""
     table: str = ""
-    database_gateway: DatabaseGateway = None
 
     def validate_instructions(self) -> None:
         super().validate_instructions()

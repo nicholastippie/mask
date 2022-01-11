@@ -11,3 +11,9 @@ def generate_dict_from_json(file_path: str) -> dict:
     with open(file_path) as file:
         data = json.load(file)
     return data
+
+
+def load_file_contents(file_path: str) -> str:
+    with open(file_path) as file:
+        contents = file.read()
+    return contents

@@ -57,6 +57,16 @@
         "where_clause": ""
     },
     {
+        "rule": "adhoc_command",
+        "group": 1,
+        "command": ""
+    },
+    {
+        "rule": "adhoc_script",
+        "group": 1,
+        "script": ""
+    },
+    {
         "rule": "disable_trigger",
         "group": 1,
         "database": "",

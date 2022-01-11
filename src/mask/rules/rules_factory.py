@@ -1,4 +1,8 @@
 from mask.database_access.database_gateway import DatabaseGateway
+from mask.rules.command_rules import (
+    AdHocCommandRule,
+    AdHocScriptRule
+)
 from mask.rules.data_rules import (
     FakeStringSubstitutionRule,
     FakeSsnSubstitutionRule,
@@ -92,6 +96,18 @@ class RulesFactory:
                     schema=instructions["schema"],
                     table=instructions["table"],
                     where_clause=instructions["where_clause"],
+                    database_gateway=database_gateway
+                )
+            elif instructions["rule"] == "adhoc_command":
+                rule = AdHocCommandRule(
+                    group=instructions["group"],
+                    command=instructions["command"],
+                    database_gateway=database_gateway
+                )
+            elif instructions["rule"] == "adhoc_script":
+                rule = AdHocScriptRule(
+                    group=instructions["group"],
+                    script=instructions["script"],
                     database_gateway=database_gateway
                 )
             elif instructions["rule"] == "disable_trigger":

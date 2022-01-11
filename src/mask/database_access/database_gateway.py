@@ -20,118 +20,100 @@ class DatabaseGateway(ABC):
         :param primary_key: List of primary key column names
         :return: String where clause which can identify the record in the database
         """
-        pass
+        ...
 
     @abstractmethod
-    def generate_update_set_clause_for_column(self, column: str, replacement_value: vars) -> str:
-        pass
+    def generate_update_set_clause_for_column(self, column: str, replacement_value: vars) -> str: ...
 
     @abstractmethod
-    def append_where_column_is_not_null(self, column: str, where_clause: str) -> str:
-        pass
+    def append_where_column_is_not_null(self, column: str, where_clause: str) -> str: ...
 
     @abstractmethod
-    def get_list_of_primary_key_columns_for_table(self, database: str, schema: str, table: str) -> list:
-        pass
+    def get_list_of_primary_key_columns_for_table(self, database: str, schema: str, table: str) -> list: ...
 
     @abstractmethod
-    def get_records_from_table(self, database: str, schema: str, table: str, where_clause: str) -> dict:
-        pass
+    def get_records_from_table(self, database: str, schema: str, table: str, where_clause: str) -> dict: ...
 
     @abstractmethod
     def update_rows(
             self, database: str, schema: str, table: str, set_clause: str, where_clause: str
-    ) -> None:
-        pass
+    ) -> None: ...
 
     @abstractmethod
     def update_date_column_with_random_variance(
             self, database: str, schema: str, table: str, column: str, where_clause: str,
             range_min: int, range_max: int
-    ) -> None:
-        pass
+    ) -> None: ...
 
     @abstractmethod
-    def truncate_table(self, database: str, schema: str, table: str) -> None:
-        pass
+    def truncate_table(self, database: str, schema: str, table: str) -> None: ...
 
     @abstractmethod
-    def delete_rows(self, database: str, schema: str, table: str, where_clause: str) -> None:
-        pass
+    def delete_rows(self, database: str, schema: str, table: str, where_clause: str) -> None: ...
 
     @abstractmethod
-    def disable_all_triggers_for_database(self, database: str) -> None:
-        pass
+    def execute_command(self, command: str) -> None: ...
 
     @abstractmethod
-    def disable_all_triggers_for_table(self, database: str, schema: str, table: str) -> None:
-        pass
+    def disable_all_triggers_for_database(self, database: str) -> None: ...
 
     @abstractmethod
-    def disable_single_trigger_for_table(self, database: str, schema: str, table: str, trigger: str) -> None:
-        pass
+    def disable_all_triggers_for_table(self, database: str, schema: str, table: str) -> None: ...
 
     @abstractmethod
-    def enable_all_triggers_for_database(self, database: str) -> None:
-        pass
+    def disable_single_trigger_for_table(self, database: str, schema: str, table: str, trigger: str) -> None: ...
 
     @abstractmethod
-    def enable_all_triggers_for_table(self, database: str, schema: str, table: str) -> None:
-        pass
+    def enable_all_triggers_for_database(self, database: str) -> None: ...
 
     @abstractmethod
-    def enable_single_trigger_for_table(self, database: str, schema: str, table: str, trigger: str) -> None:
-        pass
+    def enable_all_triggers_for_table(self, database: str, schema: str, table: str) -> None: ...
 
     @abstractmethod
-    def disable_all_check_constraints_for_database(self, database: str) -> None:
-        pass
+    def enable_single_trigger_for_table(self, database: str, schema: str, table: str, trigger: str) -> None: ...
 
     @abstractmethod
-    def disable_all_check_constraints_for_table(self, database: str, schema: str, table: str) -> None:
-        pass
+    def disable_all_check_constraints_for_database(self, database: str) -> None: ...
+
+    @abstractmethod
+    def disable_all_check_constraints_for_table(self, database: str, schema: str, table: str) -> None: ...
 
     @abstractmethod
     def disable_single_check_constraint_for_table(
-            self, database: str, schema: str, table: str, check_constraint: str) -> None:
-        pass
+            self, database: str, schema: str, table: str, check_constraint: str) -> None: ...
 
     @abstractmethod
-    def enable_all_check_constraints_for_database(self, database: str) -> None:
-        pass
+    def enable_all_check_constraints_for_database(self, database: str) -> None: ...
 
     @abstractmethod
-    def enable_all_check_constraints_for_table(self, database: str, schema: str, table: str) -> None:
-        pass
+    def enable_all_check_constraints_for_table(self, database: str, schema: str, table: str) -> None: ...
 
     @abstractmethod
     def enable_single_check_constraint_for_table(
-            self, database: str, schema: str, table: str, check_constraint: str) -> None:
-        pass
+            self,
+            database: str,
+            schema: str,
+            table: str,
+            check_constraint: str
+    ) -> None: ...
 
     @abstractmethod
-    def disable_all_foreign_keys_for_database(self, database: str) -> None:
-        pass
+    def disable_all_foreign_keys_for_database(self, database: str) -> None: ...
 
     @abstractmethod
-    def disable_all_foreign_keys_for_table(self, database: str, schema: str, table: str) -> None:
-        pass
+    def disable_all_foreign_keys_for_table(self, database: str, schema: str, table: str) -> None: ...
 
     @abstractmethod
-    def disable_single_foreign_key_for_table(self, database: str, schema: str, table: str, foreign_key) -> None:
-        pass
+    def disable_single_foreign_key_for_table(self, database: str, schema: str, table: str, foreign_key) -> None: ...
 
     @abstractmethod
-    def enable_all_foreign_keys_for_database(self, database: str) -> None:
-        pass
+    def enable_all_foreign_keys_for_database(self, database: str) -> None: ...
 
     @abstractmethod
-    def enable_all_foreign_keys_for_table(self, database: str, schema: str, table: str) -> None:
-        pass
+    def enable_all_foreign_keys_for_table(self, database: str, schema: str, table: str) -> None: ...
 
     @abstractmethod
-    def enable_single_foreign_key_for_table(self, database: str, schema: str, table: str, foreign_key) -> None:
-        pass
+    def enable_single_foreign_key_for_table(self, database: str, schema: str, table: str, foreign_key) -> None: ...
 
 
 class SqlServerDatabaseGateway(DatabaseGateway):
@@ -248,6 +230,12 @@ class SqlServerDatabaseGateway(DatabaseGateway):
     def delete_rows(self, database: str, schema: str, table: str, where_clause: str) -> None:
         self._database_context.execute(
             query=f"delete from [{database}].[{schema}].[{table}] {where_clause};",
+            values=None
+        )
+
+    def execute_command(self, command: str) -> None:
+        self._database_context.execute(
+            query=command,
             values=None
         )
 
