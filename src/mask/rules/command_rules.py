@@ -25,6 +25,9 @@ class AdHocCommandRule(Rule):
 class AdHocScriptRule(Rule):
     script: str = None
 
+    def __str__(self) -> str:
+        return f"{__class__.__name__} running script at '{self.script}'"
+
     def validate_instructions(self) -> None:
         super().validate_instructions()
         if not exists(self.script):
