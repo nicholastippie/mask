@@ -32,11 +32,6 @@ class DisableTriggerRule(DatabaseObjectRule):
 
     trigger: str = ""
 
-    def __str__(self) -> str:
-        return f"{__class__.__name__} " \
-               f"with database='{self.database}', schema='{self.schema}', " \
-               f"table='{self.table}', trigger='{self.trigger}'"
-
     def execute(self) -> None:
         """
         This rule is the reverse of EnableTriggerRule.
@@ -97,11 +92,6 @@ class EnableTriggerRule(DatabaseObjectRule):
     """ Enables one or more table triggers in a database """
 
     trigger: str = ""
-
-    def __str__(self) -> str:
-        return f"{__class__.__name__} " \
-               f"with database='{self.database}', schema='{self.schema}', " \
-               f"table='{self.table}', trigger='{self.trigger}'"
 
     def execute(self) -> None:
         """
@@ -164,11 +154,6 @@ class DisableCheckConstraintRule(DatabaseObjectRule):
 
     check_constraint: str = ""
 
-    def __str__(self) -> str:
-        return f"{__class__.__name__} " \
-               f"with database='{self.database}', schema='{self.schema}', " \
-               f"table='{self.table}', check_constraint='{self.check_constraint}'"
-
     def execute(self) -> None:
         if self.schema == "*":
             self.database_gateway.disable_all_check_constraints_for_database(self.database)
@@ -195,11 +180,6 @@ class EnableCheckConstraintRule(DatabaseObjectRule):
     """ Enable one or more table check constraints in a database """
 
     check_constraint: str = ""
-
-    def __str__(self) -> str:
-        return f"{__class__.__name__} " \
-               f"with database='{self.database}', schema='{self.schema}', " \
-               f"table='{self.table}', check_constraint='{self.check_constraint}'"
 
     def execute(self) -> None:
         if self.schema == "*":
@@ -228,11 +208,6 @@ class DisableForeignKeyRule(DatabaseObjectRule):
 
     foreign_key: str = ""
 
-    def __str__(self) -> str:
-        return f"{__class__.__name__} " \
-               f"with database='{self.database}', schema='{self.schema}', " \
-               f"table='{self.table}', foreign_key='{self.foreign_key}'"
-
     def execute(self) -> None:
         if self.schema == "*":
             self.database_gateway.disable_all_foreign_keys_for_database(self.database)
@@ -259,11 +234,6 @@ class EnableForeignKeyRule(DatabaseObjectRule):
     """ Enable one or more foreign keys in a database """
 
     foreign_key: str = ""
-
-    def __str__(self) -> str:
-        return f"{__class__.__name__} " \
-               f"with database='{self.database}', schema='{self.schema}', " \
-               f"table='{self.table}', foreign_key='{self.foreign_key}'"
 
     def execute(self) -> None:
         if self.schema == "*":

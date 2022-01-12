@@ -37,12 +37,6 @@ class FakeStringSubstitutionRule(DataRule):
     data_set_path: str = ""
     data_set_key: str = ""
 
-    def __str__(self) -> str:
-        return f"{__class__.__name__} on " \
-               f"[{self.database}].[{self.schema}].[{self.table}].[{self.column}] using " \
-               f"data set at '{self.data_set_path}' with key of '{self.data_set_key}' " \
-               f"and where clause '{self.where_clause}'"
-
     def validate_instructions(self) -> None:
         super().validate_instructions()
         if self.column == "":
@@ -105,11 +99,6 @@ class StaticStringSubstitutionRule(DataRule):
     static_value: str = ""
     where_clause: str = ""
 
-    def __str__(self) -> str:
-        return f"{__class__.__name__} " \
-               f"on [{self.database}].[{self.schema}].[{self.table}] " \
-               f"with the static value '{self.static_value}'"
-
     def validate_instructions(self) -> None:
         super().validate_instructions()
         if self.column == "":
@@ -141,11 +130,6 @@ class FakeSsnSubstitutionRule(DataRule):
     column: str = ""
     seperator: str = ""
     ignore_null: str = ""
-
-    def __str__(self) -> str:
-        return f"{__class__.__name__} " \
-               f"on [{self.database}].[{self.schema}].[{self.table}]" \
-               f".[{self.column}] with '{self.seperator}' seperator"
 
     def validate_instructions(self) -> None:
         super().validate_instructions()
@@ -273,13 +257,6 @@ class DateVarianceRule(DataRule):
     where_clause: str = ""
     method: str = ""
 
-    def __str__(self) -> str:
-        return f"{__class__.__name__} {__class__.__name__} " \
-               f"using the {str.upper(self.method)} method " \
-               f"on [{self.database}].[{self.schema}].[{self.table}]." \
-               f"[{self.column}] with random range '{self.range}' " \
-               f"and a where clause = '{self.where_clause}'"
-
     def validate_instructions(self) -> None:
         super().validate_instructions()
         if self.column == "":
@@ -385,10 +362,6 @@ class DateVarianceRule(DataRule):
 class TruncateTableRule(DataRule):
     """ Truncates the specified table in a database """
 
-    def __str__(self) -> str:
-        return f"{__class__.__name__} {__class__.__name__} " \
-               f"on [{self.database}].[{self.schema}].[{self.table}]"
-
     def execute(self):
         self.database_gateway.truncate_table(self.database, self.schema, self.table)
 
@@ -398,11 +371,6 @@ class DeleteRowsRule(DataRule):
     """ Deletes all rows in a table or only those specified in a where clause """
 
     where_clause: str = ""
-
-    def __str__(self) -> str:
-        return f"{__class__.__name__} " \
-               f"on [{self.database}].[{self.schema}].[{self.table}] with " \
-               f"with where clause = '{self.where_clause}'"
 
     def execute(self):
         self.database_gateway.delete_rows(

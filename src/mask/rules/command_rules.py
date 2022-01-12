@@ -7,10 +7,9 @@ from os.path import exists
 
 @dataclass
 class AdHocCommandRule(Rule):
-    command: str = None
+    """ Execute a single ad-hoc SQL command against the database server """
 
-    def __str__(self) -> str:
-        return f"{__class__.__name__} with command='{self.command}'"
+    command: str = None
 
     def validate_instructions(self) -> None:
         super().validate_instructions()
@@ -23,10 +22,9 @@ class AdHocCommandRule(Rule):
 
 @dataclass
 class AdHocScriptRule(Rule):
-    script: str = None
+    """ Execute an ad-hoc SQL script against the database server """
 
-    def __str__(self) -> str:
-        return f"{__class__.__name__} running script at '{self.script}'"
+    script: str = None
 
     def validate_instructions(self) -> None:
         super().validate_instructions()
