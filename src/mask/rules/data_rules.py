@@ -1,5 +1,5 @@
 from mask.config.constants import Constants
-from mask.file import generate_dict_from_json
+from mask.utils.file import generate_dict_from_json
 from mask.rules.rule import Rule
 
 from dataclasses import dataclass
@@ -29,8 +29,24 @@ class DataRule(Rule):
 
 
 @dataclass
-class FakeStringSubstitutionRule(DataRule):
-    """ Replaces values in a column with data from a data set """
+class ValueSubstitutionRule(DataRule):
+    """ Replaces values in columns with data from a data set """
+
+    column_mappings: dict = None
+    data_set_path: str = ""
+
+    def validate_instructions(self) -> None:
+        super().validate_instructions()
+        if not exists(self.data_set_path):
+            raise FileNotFoundError(f"Could not find data set at '{self.data_set_path}' for {self}")
+
+    def execute(self) -> None:
+        pass
+
+
+@dataclass
+class DynamicStringSubstitutionRule(DataRule):
+    """ Replaces string values in a column with data from a data set """
 
     column: str = ""
     where_clause: str = ""

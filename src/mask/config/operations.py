@@ -1,6 +1,7 @@
-from mask.file import generate_dict_from_json
-from mask.database_access.database_context import DatabaseContextFactory
-from mask.database_access.database_gateway import DatabaseGateway, DatabaseGatewayFactory
+from mask.utils.file import generate_dict_from_json
+from mask.database.database_context import DatabaseContextFactory
+from mask.database.database_gateway import DatabaseGateway
+from mask.database.database_gateway_factory import DatabaseGatewayFactory
 
 
 def get_configuration_settings_from_file(configuration_file: str) -> dict:

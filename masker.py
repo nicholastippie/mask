@@ -3,7 +3,7 @@ from mask.config.operations import (
     get_instruction_set_from_file,
     create_database_gateway_from_configuration_settings
 )
-from mask.database_access.database_gateway import DatabaseGateway
+from mask.database.database_gateway import DatabaseGateway
 from mask.rules.rule import Rule
 from mask.rules.rules_factory import RulesFactory
 
@@ -27,7 +27,7 @@ def main(arguments) -> None:
 
     # This has a list of distinct group numbers from the instruction set. It
     # does not matter whether the integers are sequential (e.g. 1, 2, 3, ..., n),
-    # but rather we'll sort them and run them from lowest to highest regardless
+    # but rather we'll sort them and run them from smallest to largest regardless
     # of the actual integers chosen (e.g. 5, 23, 97, ..., n).
     groups: list[int] = []
 
@@ -44,12 +44,11 @@ def main(arguments) -> None:
 
     # Sort group numbers in reverse order so that we can pop them. Pop will
     # give the last element in the list (and remove it), which we want to be
-    # the lowest next integer.
+    # the smallest next integer.
     groups.sort(reverse=True)
 
     while groups:
         group: int = groups.pop()
-
         rules_in_group: list[Rule] = [r for r in rule_controller if r.group == group]
         started_threads: list[any] = []
 

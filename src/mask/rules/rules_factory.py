@@ -1,10 +1,10 @@
-from mask.database_access.database_gateway import DatabaseGateway
+from mask.database.database_gateway import DatabaseGateway
 from mask.rules.command_rules import (
     AdHocCommandRule,
     AdHocScriptRule
 )
 from mask.rules.data_rules import (
-    FakeStringSubstitutionRule,
+    DynamicStringSubstitutionRule,
     FakeSsnSubstitutionRule,
     StaticStringSubstitutionRule,
     DateVarianceRule,
@@ -36,7 +36,7 @@ class RulesFactory:
 
         try:
             if instructions["rule"] == "fake_string_substitution":
-                rule = FakeStringSubstitutionRule(
+                rule = DynamicStringSubstitutionRule(
                     group=instructions["group"],
                     database=instructions["database"],
                     schema=instructions["schema"],

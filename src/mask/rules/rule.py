@@ -1,4 +1,4 @@
-from mask.database_access.database_gateway import DatabaseGateway
+from mask.database.database_gateway import DatabaseGateway
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
