@@ -1,24 +1,7 @@
 from mask.database.database_gateway import DatabaseGateway
-from mask.rules.command_rules import (
-    AdHocCommandRule,
-    AdHocScriptRule
-)
-from mask.rules.data_rules import (
-    DynamicStringSubstitutionRule,
-    FakeSsnSubstitutionRule,
-    StaticStringSubstitutionRule,
-    DateVarianceRule,
-    TruncateTableRule,
-    DeleteRowsRule
-)
-from mask.rules.database_object_rules import (
-    DisableTriggerRule,
-    EnableTriggerRule,
-    DisableCheckConstraintRule,
-    EnableCheckConstraintRule,
-    DisableForeignKeyRule,
-    EnableForeignKeyRule
-)
+from mask.rules.command_rules import *
+from mask.rules.data_rules import *
+from mask.rules.database_object_rules import *
 from mask.rules.rule import Rule
 
 
@@ -35,20 +18,18 @@ class RulesFactory:
         """
 
         try:
-            if instructions["rule"] == "fake_string_substitution":
-                rule = DynamicStringSubstitutionRule(
+            if instructions["rule"] == "dynamic_value_substitution":
+                rule = DynamicValueSubstitutionRule(
                     group=instructions["group"],
                     database=instructions["database"],
                     schema=instructions["schema"],
                     table=instructions["table"],
-                    column=instructions["column"],
-                    where_clause=instructions["where_clause"],
-                    data_set_path=instructions["data_set_path"],
-                    data_set_key=instructions["data_set_key"],
+                    data_mapping=instructions["data_mapping"],
+                    dataset_path=instructions["dataset_path"],
                     database_gateway=database_gateway
                 )
-            elif instructions["rule"] == "static_string_substitution":
-                rule = StaticStringSubstitutionRule(
+            elif instructions["rule"] == "static_value_substitution":
+                rule = StaticValueSubstitutionRule(
                     group=instructions["group"],
                     database=instructions["database"],
                     schema=instructions["schema"],

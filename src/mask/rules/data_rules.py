@@ -29,50 +29,37 @@ class DataRule(Rule):
 
 
 @dataclass
-class ValueSubstitutionRule(DataRule):
+class DynamicValueSubstitutionRule(DataRule):
     """ Replaces values in columns with data from a data set """
 
-    column_mappings: dict = None
-    data_set_path: str = ""
+    data_mapping: dict = None
+    dataset_path: str = ""
 
     def validate_instructions(self) -> None:
         super().validate_instructions()
-        if not exists(self.data_set_path):
-            raise FileNotFoundError(f"Could not find data set at '{self.data_set_path}' for {self}")
+        if self.data_mapping is None or self.data_mapping == {}:
+            raise ValueError(f"'data_mapping' property not set for {self}")
+        if not exists(self.dataset_path):
+            raise FileNotFoundError(f"Could not find data set at '{self.dataset_path}' for {self}")
 
     def execute(self) -> None:
-        pass
+        dataset: dict = generate_dict_from_json(self.dataset_path)
 
-
-@dataclass
-class DynamicStringSubstitutionRule(DataRule):
-    """ Replaces string values in a column with data from a data set """
-
-    column: str = ""
-    where_clause: str = ""
-    data_set_path: str = ""
-    data_set_key: str = ""
-
-    def validate_instructions(self) -> None:
-        super().validate_instructions()
-        if self.column == "":
-            raise ValueError(f"'column' property not set for {self}")
-        if not exists(self.data_set_path):
-            raise FileNotFoundError(f"Could not find data set at '{self.data_set_path}' for {self}")
-        if self.data_set_key == "":
-            raise ValueError(f"'data_set_key' property not set for {self}")
-
-    def execute(self):
-        data_set_complete: dict = generate_dict_from_json(self.data_set_path)
-        data_set_values_only: list[str] = list()
-        for item in data_set_complete:
-            data_set_values_only.append(item[self.data_set_key])
+        # The system is designed to handle only one set of database-to-dataset
+        # mappings; however, it is possible to put in multiple in the JSON array.
+        # But this does not make sense for how this rule is implemented. So, let's
+        # grab only the first and use that. The documentation will explain that
+        # only one mapping set should be provided.
+        mapping: dict = self.data_mapping[0]
+        # for database_column, dataset_column in mapping.items():
+        #     print(f"database_column={database_column}")
+        #     print(f"dataset_column={dataset_column}")
 
         records: dict = self.database_gateway.get_records_from_table(
             database=self.database,
             schema=self.schema,
             table=self.table,
-            where_clause=self.where_clause
+            where_clause=Constants.DEFAULT_WHERE_CLAUSE
         )
 
         primary_key: list[str] = self.database_gateway.get_list_of_primary_key_columns_for_table(
@@ -83,18 +70,17 @@ class DynamicStringSubstitutionRule(DataRule):
 
         count = 0
         for record in records:
-            if record[self.column] is None:
-                continue
+            print(record)
 
-            replacement_value: str = choice(data_set_values_only)
+            replacement_values: dict = choice(dataset)
 
             self.database_gateway.update_rows(
                 database=self.database,
                 schema=self.schema,
                 table=self.table,
-                set_clause=self.database_gateway.generate_update_set_clause_for_column(
-                    column=self.column,
-                    replacement_value=replacement_value
+                set_clause=self.database_gateway.generate_update_set_clause_for_columns_from_mapping(
+                    mapping=mapping,
+                    replacement_values=replacement_values
                 ),
                 where_clause=self.database_gateway.generate_where_clause_from_record(
                     record=record,
@@ -108,11 +94,11 @@ class DynamicStringSubstitutionRule(DataRule):
 
 
 @dataclass
-class StaticStringSubstitutionRule(DataRule):
-    """ Replaces the values in a column with a static string value """
+class StaticValueSubstitutionRule(DataRule):
+    """ Replaces the values in a column with a static value """
 
     column: str = ""
-    static_value: str = ""
+    static_value: any = ""
     where_clause: str = ""
 
     def validate_instructions(self) -> None:

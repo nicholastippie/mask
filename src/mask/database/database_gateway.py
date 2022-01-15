@@ -20,6 +20,12 @@ class DatabaseGateway(ABC):
     def generate_update_set_clause_for_column(self, column: str, replacement_value: vars) -> str: ...
 
     @abstractmethod
+    def generate_update_set_clause_for_columns_from_mapping(
+            self,
+            mapping: dict,
+            replacement_values: dict) -> str: ...
+
+    @abstractmethod
     def append_where_column_is_not_null(self, column: str, where_clause: str) -> str: ...
 
     @abstractmethod

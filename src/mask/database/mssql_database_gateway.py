@@ -41,6 +41,39 @@ class SqlServerDatabaseGateway(DatabaseGateway):
             # default to a string-like value
             return f" set [{column}] = '{replacement_value}'"
 
+    def generate_update_set_clause_for_columns_from_mapping(
+            self,
+            mapping: dict,
+            replacement_values: dict) -> str:
+        if mapping is None or mapping == {}:
+            raise ValueError(f"No mapping was supplied when generating "
+                             f"update set clause for columns from record")
+        if replacement_values is None or replacement_values == {}:
+            raise ValueError(f"No replacement values were supplied when generating "
+                             f"update set clause for columns from record")
+
+        set_clause = "set "
+
+        # The structure of the mapping data is as follows:
+        #       { "database_column_name": "dataset_key",  ... }
+        #
+        # So, the KEY of the mapping dict is the database column name and
+        # the VALUE is key to the dataset dict, called replacement_values here.
+        for column_name, dataset_key in mapping.items():
+            if replacement_values[dataset_key] is None:
+                set_clause = set_clause + f" [{column_name}] = NULL, "
+            elif isinstance(replacement_values[dataset_key], int):
+                set_clause = set_clause + f" [{column_name}] = {replacement_values[dataset_key]}, "
+            else:
+                # default to a string-like value
+                set_clause = set_clause + f" [{column_name}] = '{replacement_values[dataset_key]}', "
+
+        # Remove the last comma-space (", ") from the set clause string, since
+        # each iteration of mapping items must put a comma-space to separate
+        # columns and their values, but the trailing one will cause an error
+        # if present.
+        return set_clause.rstrip(", ")
+
     def append_where_column_is_not_null(self, column: str, where_clause: Optional[str] = None) -> str:
         if where_clause == "" or where_clause is None:
             where_clause = Constants.DEFAULT_WHERE_CLAUSE

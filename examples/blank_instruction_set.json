@@ -1,17 +1,21 @@
 [
     {
-        "rule": "fake_string_substitution",
+        "rule": "dynamic_value_substitution",
         "group": 1,
         "database": "",
         "schema": "",
         "table": "",
-        "column": "",
-        "where_clause": "",
-        "data_set_path": "",
-        "data_set_key": ""
+        "data_mapping": [
+            {
+                "database_column_1": "dataset_column_1",
+                "database_column_2": "dataset_column_2",
+                "database_column_3": "dataset_column_3"
+            }
+        ],
+        "dataset_path": ""
     },
     {
-        "rule": "static_string_substitution",
+        "rule": "static_value_substitution",
         "group": 1,
         "database": "",
         "schema": "",
