@@ -51,9 +51,6 @@ class DynamicValueSubstitutionRule(DataRule):
         # grab only the first and use that. The documentation will explain that
         # only one mapping set should be provided.
         mapping: dict = self.data_mapping[0]
-        # for database_column, dataset_column in mapping.items():
-        #     print(f"database_column={database_column}")
-        #     print(f"dataset_column={dataset_column}")
 
         records: dict = self.database_gateway.get_records_from_table(
             database=self.database,
@@ -70,8 +67,6 @@ class DynamicValueSubstitutionRule(DataRule):
 
         count = 0
         for record in records:
-            print(record)
-
             replacement_values: dict = choice(dataset)
 
             self.database_gateway.update_rows(
