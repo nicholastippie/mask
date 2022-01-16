@@ -27,6 +27,63 @@ class DataRule(Rule):
     def execute(self) -> None:
         pass
 
+    def _get_records_and_primary_key(
+            self,
+            where_clause: str
+    ) -> tuple[dict, list]:
+        if where_clause is None or where_clause == "":
+            where_clause = Constants.DEFAULT_WHERE_CLAUSE
+
+        records: dict = self.database_gateway.get_records_from_table(
+            database=self.database,
+            schema=self.schema,
+            table=self.table,
+            where_clause=where_clause
+        )
+
+        primary_key: list[str] = self.database_gateway.get_list_of_primary_key_columns_for_table(
+            database=self.database,
+            schema=self.schema,
+            table=self.table
+        )
+
+        return records, primary_key
+
+    def _update_record(
+            self,
+            record: dict,
+            primary_key: list,
+            **kwargs
+    ) -> None:
+        if "mapping" in kwargs and "replacement_values" in kwargs:
+            set_clause, set_clause_values = self.database_gateway.generate_set_clause_from_mapping(
+                mapping=kwargs["mapping"],
+                replacement_values=kwargs["replacement_values"]
+            )
+        elif "column" in kwargs and "replacement_value" in kwargs:
+            set_clause, set_clause_values = self.database_gateway.generate_set_clause_for_column(
+                column=kwargs["column"],
+                replacement_value=kwargs["replacement_value"]
+            )
+        else:
+            raise ValueError(f"Did not get expected parameter set to update record")
+
+        where_clause, where_clause_values = self.database_gateway.generate_where_clause_from_record(
+            record=record,
+            primary_key=primary_key
+        )
+
+        values: tuple[any] = set_clause_values + where_clause_values
+
+        self.database_gateway.update_rows(
+            database=self.database,
+            schema=self.schema,
+            table=self.table,
+            set_clause=set_clause,
+            where_clause=where_clause,
+            values=values
+        )
+
 
 @dataclass
 class DynamicValueSubstitutionRule(DataRule):
@@ -48,39 +105,21 @@ class DynamicValueSubstitutionRule(DataRule):
         # The system is designed to handle only one set of database-to-dataset
         # mappings; however, it is possible to put in multiple in the JSON array.
         # But this does not make sense for how this rule is implemented. So, let's
-        # grab only the first and use that. The documentation will explain that
-        # only one mapping set should be provided.
+        # grab only the first and use that. The documentation explains that only
+        # one mapping set should be provided.
         mapping: dict = self.data_mapping[0]
 
-        records: dict = self.database_gateway.get_records_from_table(
-            database=self.database,
-            schema=self.schema,
-            table=self.table,
-            where_clause=Constants.DEFAULT_WHERE_CLAUSE
-        )
-
-        primary_key: list[str] = self.database_gateway.get_list_of_primary_key_columns_for_table(
-            database=self.database,
-            schema=self.schema,
-            table=self.table
-        )
+        records, primary_key = super()._get_records_and_primary_key(where_clause=Constants.DEFAULT_WHERE_CLAUSE)
 
         count = 0
         for record in records:
             replacement_values: dict = choice(dataset)
 
-            self.database_gateway.update_rows(
-                database=self.database,
-                schema=self.schema,
-                table=self.table,
-                set_clause=self.database_gateway.generate_update_set_clause_for_columns_from_mapping(
-                    mapping=mapping,
-                    replacement_values=replacement_values
-                ),
-                where_clause=self.database_gateway.generate_where_clause_from_record(
-                    record=record,
-                    primary_key=primary_key
-                ),
+            super()._update_record(
+                record=record,
+                primary_key=primary_key,
+                mapping=mapping,
+                replacement_values=replacement_values
             )
 
             count = count + 1
@@ -104,15 +143,21 @@ class StaticValueSubstitutionRule(DataRule):
     def execute(self) -> None:
         replacement_value = self.static_value if self.static_value != "NULL" else None
 
+        set_clause, set_clause_values = self.database_gateway.generate_set_clause_for_column(
+            column=self.column,
+            replacement_value=replacement_value
+        )
+
+        # Let's assume that the where clause passed in from the instruction set
+        # is appropriately sanitized (e.g. no single-quote issues). Only the
+        # set clause needs to be sanitized.
         self.database_gateway.update_rows(
             database=self.database,
             schema=self.schema,
             table=self.table,
-            set_clause=self.database_gateway.generate_update_set_clause_for_column(
-                column=self.column,
-                replacement_value=replacement_value
-            ),
-            where_clause=self.where_clause
+            set_clause=set_clause,
+            where_clause=self.where_clause,
+            values=set_clause_values
         )
 
 
@@ -148,18 +193,7 @@ class FakeSsnSubstitutionRule(DataRule):
                 where_clause=select_where_clause
             )
 
-        records: dict = self.database_gateway.get_records_from_table(
-            database=self.database,
-            schema=self.schema,
-            table=self.table,
-            where_clause=select_where_clause
-        )
-
-        primary_key: list[str] = self.database_gateway.get_list_of_primary_key_columns_for_table(
-            database=self.database,
-            schema=self.schema,
-            table=self.table
-        )
+        records, primary_key = super()._get_records_and_primary_key(where_clause=select_where_clause)
 
         count: int = 0
         for record in records:
@@ -182,18 +216,11 @@ class FakeSsnSubstitutionRule(DataRule):
             if invalid_ssn == "" or invalid_ssn is None:
                 raise ValueError(f"Invalid SSN cannot be empty")
 
-            self.database_gateway.update_rows(
-                database=self.database,
-                schema=self.schema,
-                table=self.table,
-                set_clause=self.database_gateway.generate_update_set_clause_for_column(
-                    column=self.column,
-                    replacement_value=invalid_ssn
-                ),
-                where_clause=self.database_gateway.generate_where_clause_from_record(
-                    record=record,
-                    primary_key=primary_key
-                )
+            super()._update_record(
+                record=record,
+                primary_key=primary_key,
+                column=self.column,
+                replacement_value=invalid_ssn
             )
 
             count = count + 1
@@ -314,18 +341,7 @@ class DateVarianceRule(DataRule):
             where_clause=select_where_clause
         )
 
-        records: dict = self.database_gateway.get_records_from_table(
-            database=self.database,
-            schema=self.schema,
-            table=self.table,
-            where_clause=select_where_clause
-        )
-
-        primary_key: list[str] = self.database_gateway.get_list_of_primary_key_columns_for_table(
-            database=self.database,
-            schema=self.schema,
-            table=self.table
-        )
+        records, primary_key = super()._get_records_and_primary_key(where_clause=select_where_clause)
 
         count = 0
         for record in records:
@@ -336,18 +352,11 @@ class DateVarianceRule(DataRule):
             replacement_date: datetime = record[self.column] + timedelta(days=random_number)
             replacement_date = replacement_date.replace(microsecond=0)
 
-            self.database_gateway.update_rows(
-                database=self.database,
-                schema=self.schema,
-                table=self.table,
-                set_clause=self.database_gateway.generate_update_set_clause_for_column(
-                    column=self.column,
-                    replacement_value=replacement_date
-                ),
-                where_clause=self.database_gateway.generate_where_clause_from_record(
-                    record=record,
-                    primary_key=primary_key
-                ),
+            super()._update_record(
+                record=record,
+                primary_key=primary_key,
+                column=self.column,
+                replacement_value=replacement_date
             )
 
             count = count + 1

@@ -9,11 +9,12 @@ class SqlServerDatabaseGateway(DatabaseGateway):
     def __init__(self, database_context: DatabaseContext):
         self._database_context: DatabaseContext = database_context
 
-    def generate_where_clause_from_record(self, record: dict, primary_key: list = None) -> str:
+    def generate_where_clause_from_record(self, record: dict, primary_key: list = None) -> tuple[str, tuple]:
         if record is None:
             raise ValueError("Cannot generate where clause from empty record")
 
         where_clause: str = Constants.DEFAULT_WHERE_CLAUSE
+        values: list[any] = []
 
         if primary_key is not None and primary_key != []:
             # If primary key columns were passed in, then reduce the record
@@ -22,29 +23,37 @@ class SqlServerDatabaseGateway(DatabaseGateway):
             record: dict = {x: record[x] for x in primary_key}
 
         for column in record:
-            if record[column] is None:
-                where_clause = where_clause + f" and [{column}] is NULL "
-            elif isinstance(record[column], int):
-                where_clause = where_clause + f" and [{column}] = {record[column]} "
+            if record[column] is not None:
+                values.append(record[column])
+                if isinstance(record[column], int):
+                    where_clause = where_clause + f" and [{column}] = %d "
+                else:
+                    # default to a string-like value
+                    where_clause = where_clause + f" and [{column}] = %s "
             else:
-                # default to a string-like value
-                where_clause = where_clause + f" and [{column}] = '{record[column]}' "
+                where_clause = where_clause + f" and [{column}] is NULL "
 
-        return where_clause
+        return where_clause, tuple(values)
 
-    def generate_update_set_clause_for_column(self, column: str, replacement_value: vars) -> str:
-        if replacement_value is None:
-            return f" set [{column}] = NULL"
-        elif isinstance(replacement_value, int):
-            return f" set [{column}] = {replacement_value} "
+    def generate_set_clause_for_column(self, column: str, replacement_value: vars) -> tuple[str, tuple]:
+        values: list[any] = []
+
+        if replacement_value is not None:
+            values.append(replacement_value)
+            if isinstance(replacement_value, int):
+                set_clause = f" set [{column}] = %d "
+            else:
+                set_clause = f" set [{column}] = %s "
         else:
-            # default to a string-like value
-            return f" set [{column}] = '{replacement_value}'"
+            set_clause = f" set [{column}] = NULL"
 
-    def generate_update_set_clause_for_columns_from_mapping(
+        return set_clause, tuple(values)
+
+    def generate_set_clause_from_mapping(
             self,
             mapping: dict,
-            replacement_values: dict) -> str:
+            replacement_values: dict
+    ) -> tuple[str, tuple]:
         if mapping is None or mapping == {}:
             raise ValueError(f"No mapping was supplied when generating "
                              f"update set clause for columns from record")
@@ -52,7 +61,8 @@ class SqlServerDatabaseGateway(DatabaseGateway):
             raise ValueError(f"No replacement values were supplied when generating "
                              f"update set clause for columns from record")
 
-        set_clause = "set "
+        set_clause: str = "set "
+        values: list[any] = []
 
         # The structure of the mapping data is as follows:
         #       { "database_column_name": "dataset_key",  ... }
@@ -60,19 +70,21 @@ class SqlServerDatabaseGateway(DatabaseGateway):
         # So, the KEY of the mapping dict is the database column name and
         # the VALUE is key to the dataset dict, called replacement_values here.
         for column_name, dataset_key in mapping.items():
-            if replacement_values[dataset_key] is None:
-                set_clause = set_clause + f" [{column_name}] = NULL, "
-            elif isinstance(replacement_values[dataset_key], int):
-                set_clause = set_clause + f" [{column_name}] = {replacement_values[dataset_key]}, "
+            if replacement_values[dataset_key] is not None:
+                values.append(replacement_values[dataset_key])
+                if isinstance(replacement_values[dataset_key], int):
+                    set_clause = set_clause + f" [{column_name}] = %d, "
+                else:
+                    # default to a string-like value
+                    set_clause = set_clause + f" [{column_name}] = %s, "
             else:
-                # default to a string-like value
-                set_clause = set_clause + f" [{column_name}] = '{replacement_values[dataset_key]}', "
+                set_clause = set_clause + f" [{column_name}] = NULL, "
 
         # Remove the last comma-space (", ") from the set clause string, since
         # each iteration of mapping items must put a comma-space to separate
         # columns and their values, but the trailing one will cause an error
         # if present.
-        return set_clause.rstrip(", ")
+        return set_clause.rstrip(", "), tuple(values)
 
     def append_where_column_is_not_null(self, column: str, where_clause: Optional[str] = None) -> str:
         if where_clause == "" or where_clause is None:
@@ -117,12 +129,13 @@ class SqlServerDatabaseGateway(DatabaseGateway):
             schema: str,
             table: str,
             set_clause: str,
-            where_clause: str
+            where_clause: str,
+            values: tuple = None
     ) -> None:
         self._database_context.execute(
             query=f"update [{database}].[{schema}].[{table}] "
                   f"{set_clause} {where_clause};",
-            values=None
+            values=values
         )
 
     def update_date_column_with_random_variance(

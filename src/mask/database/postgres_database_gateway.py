@@ -6,16 +6,16 @@ class PostgresDatabaseGateway(DatabaseGateway):
     def __init__(self, database_context: DatabaseContext):
         self._database_context: DatabaseContext = database_context
 
-    def generate_where_clause_from_record(self, record: dict, primary_key: list) -> str:
+    def generate_where_clause_from_record(self, record: dict, primary_key: list) -> tuple[str, tuple]:
         pass
 
-    def generate_update_set_clause_for_column(self, column: str, replacement_value: vars) -> str:
+    def generate_set_clause_for_column(self, column: str, replacement_value: vars) -> tuple[str, tuple]:
         pass
 
-    def generate_update_set_clause_for_columns_from_mapping(
+    def generate_set_clause_from_mapping(
             self,
             mapping: dict,
-            replacement_values: dict) -> str:
+            replacement_values: dict) -> tuple[str, tuple]:
         pass
 
     def append_where_column_is_not_null(self, column: str, where_clause: str) -> str:
@@ -33,7 +33,8 @@ class PostgresDatabaseGateway(DatabaseGateway):
             schema: str,
             table: str,
             set_clause: str,
-            where_clause: str
+            where_clause: str,
+            values: tuple = None
     ) -> None:
         pass
 

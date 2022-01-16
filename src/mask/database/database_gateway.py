@@ -5,7 +5,7 @@ class DatabaseGateway(ABC):
     """ Interface for database access """
 
     @abstractmethod
-    def generate_where_clause_from_record(self, record: dict, primary_key: list) -> str:
+    def generate_where_clause_from_record(self, record: dict, primary_key: list) -> tuple[str, tuple]:
         """
         Create a where clause from a record such that the where clause can distinctly
         identify the record in the database.
@@ -17,13 +17,13 @@ class DatabaseGateway(ABC):
         ...
 
     @abstractmethod
-    def generate_update_set_clause_for_column(self, column: str, replacement_value: vars) -> str: ...
+    def generate_set_clause_for_column(self, column: str, replacement_value: vars) -> tuple[str, tuple]: ...
 
     @abstractmethod
-    def generate_update_set_clause_for_columns_from_mapping(
+    def generate_set_clause_from_mapping(
             self,
             mapping: dict,
-            replacement_values: dict) -> str: ...
+            replacement_values: dict) -> tuple[str, tuple]: ...
 
     @abstractmethod
     def append_where_column_is_not_null(self, column: str, where_clause: str) -> str: ...
@@ -36,7 +36,13 @@ class DatabaseGateway(ABC):
 
     @abstractmethod
     def update_rows(
-            self, database: str, schema: str, table: str, set_clause: str, where_clause: str
+            self,
+            database: str,
+            schema: str,
+            table: str,
+            set_clause: str,
+            where_clause: str,
+            values: tuple = None
     ) -> None: ...
 
     @abstractmethod
