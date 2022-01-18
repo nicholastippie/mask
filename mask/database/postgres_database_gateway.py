@@ -21,7 +21,7 @@ class PostgresDatabaseGateway(DatabaseGateway):
     def append_where_column_is_not_null(self, column: str, where_clause: str) -> str:
         pass
 
-    def get_list_of_primary_key_columns_for_table(self, database: str, schema: str, table: str) -> list:
+    def get_primary_key_for_table(self, database: str, schema: str, table: str) -> list:
         pass
 
     def get_records_from_table(self, database: str, schema: str, table: str, where_clause: str) -> dict:

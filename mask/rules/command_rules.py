@@ -1,4 +1,4 @@
-from mask.utils.file import load_file_contents
+from mask.utilities.file import load_file_contents
 from mask.rules.rule import Rule
 
 from dataclasses import dataclass

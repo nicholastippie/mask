@@ -1,5 +1,5 @@
-from mask.config.constants import Constants
-from mask.utils.file import generate_dict_from_json
+from mask.configuration.constants import Constants
+from mask.utilities.file import generate_dict_from_json
 from mask.rules.rule import Rule
 
 from dataclasses import dataclass
@@ -27,10 +27,7 @@ class DataRule(Rule):
     def execute(self) -> None:
         pass
 
-    def _get_records_and_primary_key(
-            self,
-            where_clause: str
-    ) -> tuple[dict, list]:
+    def _get_records_and_primary_key(self, where_clause: str) -> tuple[dict, list]:
         if where_clause is None or where_clause == "":
             where_clause = Constants.DEFAULT_WHERE_CLAUSE
 
@@ -41,7 +38,7 @@ class DataRule(Rule):
             where_clause=where_clause
         )
 
-        primary_key: list[str] = self.database_gateway.get_list_of_primary_key_columns_for_table(
+        primary_key: list[str] = self.database_gateway.get_primary_key_for_table(
             database=self.database,
             schema=self.schema,
             table=self.table
@@ -49,12 +46,7 @@ class DataRule(Rule):
 
         return records, primary_key
 
-    def _update_record(
-            self,
-            record: dict,
-            primary_key: list,
-            **kwargs
-    ) -> None:
+    def _update_record(self, record: dict, primary_key: list, **kwargs) -> None:
         if "mapping" in kwargs and "replacement_values" in kwargs:
             set_clause, set_clause_values = self.database_gateway.generate_set_clause_from_mapping(
                 mapping=kwargs["mapping"],
@@ -163,7 +155,7 @@ class StaticValueSubstitutionRule(DataRule):
 
 @dataclass
 class FakeSsnSubstitutionRule(DataRule):
-    """ Generates a random invalid Social Security Number """
+    """ Replaces an existing Social Security Number with a fake one """
 
     class IgnoreNullOptions(Enum):
         AFFIRMATIVE = "yes"

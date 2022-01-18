@@ -1,4 +1,4 @@
-from mask.config.constants import Constants
+from mask.configuration.constants import Constants
 from mask.database.database_context import DatabaseContext
 from mask.database.database_gateway import DatabaseGateway
 
@@ -92,7 +92,7 @@ class SqlServerDatabaseGateway(DatabaseGateway):
 
         return where_clause + f" and [{column}] is not null "
 
-    def get_list_of_primary_key_columns_for_table(self, database: str, schema: str, table: str) -> list[str]:
+    def get_primary_key_for_table(self, database: str, schema: str, table: str) -> list[str]:
         data_set: dict = self._database_context.query(
             query=f"use [{database}]; "
                   f"select col.[name] as column_name "

@@ -1,4 +1,8 @@
-from mask.config.operations import *
+from mask.configuration.operations import (
+    get_configuration_settings_from_file,
+    get_instruction_set_from_file,
+    create_database_gateway_from_configuration_settings
+)
 from mask.database.database_gateway import DatabaseGateway
 from mask.rules.rule import Rule
 from mask.rules.rules_factory import RulesFactory

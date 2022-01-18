@@ -1,4 +1,4 @@
-from mask.utils.file import generate_dict_from_json
+from mask.utilities.file import generate_dict_from_json
 from mask.database.database_context import DatabaseContextFactory
 from mask.database.database_gateway import DatabaseGateway
 from mask.database.database_gateway_factory import DatabaseGatewayFactory
