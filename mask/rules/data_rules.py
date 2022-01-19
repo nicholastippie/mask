@@ -82,6 +82,7 @@ class DynamicValueSubstitutionRule(DataRule):
     """ Replaces values in columns with data from a data set """
 
     data_mapping: dict = None
+    where_clause: str = Constants.DEFAULT_WHERE_CLAUSE
     dataset_path: str = ""
 
     def validate_instructions(self) -> None:
@@ -101,7 +102,9 @@ class DynamicValueSubstitutionRule(DataRule):
         # one mapping set should be provided.
         mapping: dict = self.data_mapping[0]
 
-        records, primary_key = super()._get_records_and_primary_key(where_clause=Constants.DEFAULT_WHERE_CLAUSE)
+        records, primary_key = super()._get_records_and_primary_key(where_clause=self.where_clause)
+
+        print(f"Records={len(records)} - {self}")
 
         count = 0
         for record in records:
@@ -116,7 +119,7 @@ class DynamicValueSubstitutionRule(DataRule):
 
             count = count + 1
             if count % 1000 == 0:
-                print(f"Count={count} @ {datetime.now()}")
+                print(f"Count={count} @ {datetime.now()} - {self}")
 
 
 @dataclass
@@ -353,7 +356,7 @@ class DateVarianceRule(DataRule):
 
             count = count + 1
             if count % 1000 == 0:
-                print(f"Count={count} @ {datetime.now()} for {self}")
+                print(f"Count={count} @ {datetime.now()} - {self}")
 
 
 @dataclass
