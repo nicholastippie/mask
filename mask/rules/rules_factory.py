@@ -25,6 +25,7 @@ class RulesFactory:
                     schema=instructions["schema"],
                     table=instructions["table"],
                     data_mapping=instructions["data_mapping"],
+                    where_clause=instructions["where_clause"],
                     dataset_path=instructions["dataset_path"],
                     database_gateway=database_gateway
                 )

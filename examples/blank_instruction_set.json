@@ -12,6 +12,7 @@
                 "database_column_3": "dataset_column_3"
             }
         ],
+        "where_clause": "",
         "dataset_path": ""
     },
     {

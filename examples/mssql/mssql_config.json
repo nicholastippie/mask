@@ -4,5 +4,6 @@
     "database_user": "",
     "database_password": "",
     "database_name": "tempdb",
-    "instruction_set_file": ""
+    "instruction_set_file": "",
+    "logging_directory": ""
 }
